@@ -37,6 +37,11 @@ function esc_attr_e( $s ) {
 function esc_html_e( $s ) {
 	echo esc_html( $s );
 }
+$customize_preview = false;
+function is_customize_preview() {
+	global $customize_preview;
+	return $customize_preview;
+}
 function wp_print_inline_script_tag( $js, $attrs ) {
 	echo '<script id="' . $attrs['id'] . '">' . $js . "</script>\n";
 }
@@ -114,6 +119,12 @@ check( '' === all_output(), 'registered but disabled => no output' );
 $options['eds_dps_enabled'] = '1';
 $integration = _eds_dps_frontend_integration();
 check( null !== $integration && 'example-theme' === $integration['integration_id'], 'enabled + valid registration => active' );
+
+$customize_preview = true;
+check( null === _eds_dps_frontend_integration(), 'Customizer preview => inert' );
+check( '' === all_output(), 'Customizer preview => no output' );
+$customize_preview = false;
+check( null !== _eds_dps_frontend_integration(), 'outside the Customizer preview => active again' );
 
 // --- Payload ----------------------------------------------------------------
 

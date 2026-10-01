@@ -23,7 +23,8 @@ The plugin prints nothing unless **all** of the following are true:
 
 1. the setting is enabled;
 2. `eds_dps_get_integration()` returns a valid integration;
-3. that integration has at least one palette.
+3. that integration has at least one palette;
+4. the request is not a Customizer preview (there, a stored visitor choice must not mask the palette being edited).
 
 Otherwise the plugin is inert and the theme renders exactly as it would without it.
 

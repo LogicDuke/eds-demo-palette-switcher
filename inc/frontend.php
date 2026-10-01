@@ -24,7 +24,8 @@ add_action( 'wp_footer', '_eds_dps_print_panel' );
  * @return array|null
  */
 function _eds_dps_frontend_integration() {
-	if ( ! _eds_dps_is_enabled() ) {
+	// The Customizer preview shows the palette being edited; a stored visitor choice must not mask it.
+	if ( ! _eds_dps_is_enabled() || is_customize_preview() ) {
 		return null;
 	}
 	$integration = eds_dps_get_integration();
