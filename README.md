@@ -6,7 +6,74 @@ Lets visitors to Elite Digital Solutions demo sites temporarily preview the colo
 
 The theme owns the palettes. The plugin only receives what the theme registers, displays it, and (in a later version) applies the visitor's choice client-side through `localStorage`. There are no database writes, no Customizer or option changes, and no page reloads, so it stays safe behind full-page caches such as Cloudflare. The plugin ships no palettes of its own.
 
-> Status: v0.1.0 contains the integration contract only. It has no frontend output yet.
+> Status: v0.1.0, Phase 2. The integration contract plus a minimal, functional (unstyled) switcher. No theme integration ships with the plugin yet.
+
+## Admin setting
+
+There is one setting: **Settings → General → Demo Palette Switcher → Enable Demo Palette Switcher**.
+
+- It is **off by default**.
+- It is stored in the `eds_dps_enabled` option as `'1'` or `'0'`, and saved through the WordPress Settings API, which requires `manage_options`.
+- Visitors never write to it.
+- Uninstalling the plugin (Delete on the Plugins screen) removes this option. Nothing else is removed, because nothing else is stored; theme settings and palette definitions belong to the theme.
+
+## When the frontend runs
+
+The plugin prints nothing unless **all** of the following are true:
+
+1. the setting is enabled;
+2. `eds_dps_get_integration()` returns a valid integration;
+3. that integration has at least one palette.
+
+Otherwise the plugin is inert and the theme renders exactly as it would without it.
+
+## How the preview works
+
+### No-flash bootstrap
+
+A tiny inline script runs at `wp_head` priority 1, before the theme's styles. It:
+
+1. reads `localStorage['eds-dps:<integration_id>']`;
+2. applies it as `<html data-eds-demo-palette="<id>">`, but only if the stored value is one of the registered palette IDs that PHP printed into the page.
+
+If storage is unavailable or the stored value is unknown, it does nothing. It never throws and never waits for other scripts. The same inline script also exposes the page configuration as `window.edsDemoPalette`.
+
+### Palette CSS
+
+A `<style id="eds-dps-palettes">` block is printed late in `<head>` (`wp_head` priority 99), generated only from validated registration data. It contains one rule per palette:
+
+```css
+html[data-eds-demo-palette="dark"]{--example-bg:#000;--example-text:#fff;}
+```
+
+`html[attr]` is more specific than `:root`, so these rules win over the theme's defaults. **The theme must define its palette variables on `:root` or `html`** for the override to reach them. Visitors can never supply CSS.
+
+### Persistence
+
+Choosing a palette:
+
+- sets the `html` attribute immediately;
+- stores **only the palette ID** under `eds-dps:<integration_id>` in that visitor's `localStorage`.
+
+The preview needs no reloads, AJAX requests, cookies, database writes, option changes or Customizer changes. If storage is blocked, the preview still applies on the current page but isn't remembered.
+
+### Reset to Default
+
+Reset removes the stored key and removes the `data-eds-demo-palette` attribute. The theme's own CSS then applies again, showing the palette WordPress is configured to use. Choosing the default palette by its button is different: it stores the choice explicitly, like any other palette.
+
+### Cloudflare and page caching
+
+Every response is identical for every visitor: the bootstrap, the CSS and the panel markup are the same, and the per-visitor choice lives only in the browser. The plugin sets no cookies or `Vary` headers, so pages are safe to cache at the edge.
+
+### Switcher panel (Phase 2: functional only)
+
+The panel is a fixed box with these parts:
+
+- one real `<button>` per palette, showing its swatches and name, with `aria-pressed` marking the current palette;
+- a "Current palette" line, announced through `aria-live="polite"`;
+- a **Reset to Default** button.
+
+It stays `hidden` until the controller script runs, so visitors never see controls that don't work.
 
 ## Theme integration
 
@@ -104,5 +171,6 @@ This leaves no way to break out of the declaration, inject selectors or raw CSS,
 ## Development
 
 ```sh
-php tests/contract-check.php
+php tests/contract-check.php   # registration contract
+php tests/frontend-check.php   # setting, eligibility, output; runs browser logic in Node (requires node)
 ```

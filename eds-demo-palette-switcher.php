@@ -15,6 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'EDS_DPS_VERSION', '0.1.0' );
+define( 'EDS_DPS_FILE', __FILE__ );
+
+require __DIR__ . '/inc/admin.php';
+require __DIR__ . '/inc/frontend.php';
 
 /**
  * Public theme API: register the active theme's palettes.

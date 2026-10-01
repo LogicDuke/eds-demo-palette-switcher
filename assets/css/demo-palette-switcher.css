@@ -1,0 +1,61 @@
+/* Functional Phase 2 panel. Fixed neutral colors so it stays legible under any palette. */
+.eds-dps {
+	position: fixed;
+	right: 16px;
+	bottom: 16px;
+	z-index: 99999;
+	max-width: calc(100vw - 32px);
+	padding: 12px;
+	background: #fff;
+	color: #1d2327;
+	border: 1px solid #8c8f94;
+	font: 14px/1.4 system-ui, sans-serif;
+}
+
+.eds-dps[hidden] {
+	display: none;
+}
+
+.eds-dps__current {
+	margin: 0 0 8px;
+}
+
+.eds-dps__list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 8px;
+}
+
+.eds-dps button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 8px;
+	background: #f6f7f7;
+	color: #1d2327;
+	border: 1px solid #8c8f94;
+	font: inherit;
+	cursor: pointer;
+}
+
+.eds-dps button[aria-pressed="true"] {
+	border-color: #1d2327;
+	box-shadow: inset 0 0 0 1px #1d2327;
+	font-weight: 600;
+}
+
+.eds-dps button:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+.eds-dps__swatches {
+	display: inline-flex;
+}
+
+.eds-dps__swatch {
+	width: 14px;
+	height: 14px;
+	border: 1px solid rgba(0, 0, 0, 0.3);
+}

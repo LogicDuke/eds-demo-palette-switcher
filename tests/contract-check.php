@@ -6,6 +6,8 @@
 
 define( 'ABSPATH', __DIR__ );
 
+function add_action() {}
+
 function sanitize_key( $key ) {
 	return preg_replace( '/[^a-z0-9_\-]/', '', strtolower( $key ) );
 }
