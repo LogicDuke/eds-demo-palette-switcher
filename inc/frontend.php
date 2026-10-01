@@ -135,7 +135,8 @@ function _eds_dps_enqueue_assets() {
 }
 
 /**
- * The switcher panel. Hidden until the controller script runs, so it never shows dead buttons.
+ * The switcher: a "Try Colors" toggle and a non-modal panel it discloses.
+ * Hidden until the controller script runs, so it never shows dead buttons.
  *
  * @internal
  */
@@ -145,23 +146,45 @@ function _eds_dps_print_panel() {
 		return;
 	}
 	?>
-	<div id="eds-dps" class="eds-dps" role="region" aria-label="<?php esc_attr_e( 'Demo color palettes', 'eds-demo-palette-switcher' ); ?>" hidden>
-		<p class="eds-dps__current" aria-live="polite">
-			<?php esc_html_e( 'Current palette:', 'eds-demo-palette-switcher' ); ?> <strong data-eds-dps-current></strong>
-		</p>
-		<div class="eds-dps__list" role="group" aria-label="<?php esc_attr_e( 'Choose a palette', 'eds-demo-palette-switcher' ); ?>">
-			<?php foreach ( $integration['palettes'] as $palette ) : ?>
-				<button type="button" class="eds-dps__palette" data-eds-dps-palette="<?php echo esc_attr( $palette['id'] ); ?>" aria-pressed="false">
-					<span class="eds-dps__swatches" aria-hidden="true">
-						<?php foreach ( $palette['swatches'] as $swatch ) : ?>
-							<span class="eds-dps__swatch" style="background-color:<?php echo esc_attr( $swatch ); ?>"></span>
-						<?php endforeach; ?>
-					</span>
-					<span class="eds-dps__name"><?php echo esc_html( $palette['name'] ); ?></span>
+	<div id="eds-dps" class="eds-dps" hidden>
+		<button type="button" class="eds-dps__toggle" data-eds-dps-toggle aria-expanded="false" aria-controls="eds-dps-panel">
+			<svg class="eds-dps__toggle-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="7.5" cy="8" r="4.25"/><circle cx="12.5" cy="8" r="4.25"/><circle cx="10" cy="12.5" r="4.25"/></svg>
+			<span class="eds-dps__toggle-label"><?php esc_html_e( 'Try Colors', 'eds-demo-palette-switcher' ); ?></span>
+		</button>
+		<section id="eds-dps-panel" class="eds-dps__panel" data-eds-dps-panel aria-labelledby="eds-dps-title" hidden>
+			<header class="eds-dps__head">
+				<p id="eds-dps-title" class="eds-dps__title"><?php esc_html_e( 'EDS Demo Colors', 'eds-demo-palette-switcher' ); ?></p>
+				<p class="eds-dps__intro"><?php esc_html_e( 'Preview another palette instantly.', 'eds-demo-palette-switcher' ); ?></p>
+				<button type="button" class="eds-dps__close" data-eds-dps-close aria-label="<?php esc_attr_e( 'Close color preview', 'eds-demo-palette-switcher' ); ?>">
+					<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M5 5l10 10M15 5L5 15"/></svg>
 				</button>
-			<?php endforeach; ?>
-		</div>
-		<button type="button" class="eds-dps__reset" data-eds-dps-reset><?php esc_html_e( 'Reset to Default', 'eds-demo-palette-switcher' ); ?></button>
+				<p class="eds-dps__current" aria-live="polite">
+					<span class="eds-dps__current-label"><?php esc_html_e( 'Now showing', 'eds-demo-palette-switcher' ); ?></span>
+					<strong data-eds-dps-current></strong>
+				</p>
+			</header>
+			<div class="eds-dps__list" role="group" aria-label="<?php esc_attr_e( 'Choose a palette', 'eds-demo-palette-switcher' ); ?>">
+				<?php foreach ( $integration['palettes'] as $palette ) : ?>
+					<button type="button" class="eds-dps__palette" data-eds-dps-palette="<?php echo esc_attr( $palette['id'] ); ?>" aria-pressed="false">
+						<span class="eds-dps__swatches" aria-hidden="true">
+							<?php foreach ( $palette['swatches'] as $swatch ) : ?>
+								<span class="eds-dps__swatch" style="background-color:<?php echo esc_attr( $swatch ); ?>"></span>
+							<?php endforeach; ?>
+						</span>
+						<span class="eds-dps__meta">
+							<span class="eds-dps__name"><?php echo esc_html( $palette['name'] ); ?></span>
+							<?php if ( $palette['id'] === $integration['default_palette'] ) : ?>
+								<span class="eds-dps__badge"><?php esc_html_e( 'Site default', 'eds-demo-palette-switcher' ); ?></span>
+							<?php endif; ?>
+						</span>
+						<svg class="eds-dps__check" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M5 10.5l3.25 3.25L15 7"/></svg>
+					</button>
+				<?php endforeach; ?>
+			</div>
+			<footer class="eds-dps__foot">
+				<button type="button" class="eds-dps__reset" data-eds-dps-reset><?php esc_html_e( 'Reset to Default', 'eds-demo-palette-switcher' ); ?></button>
+			</footer>
+		</section>
 	</div>
 	<?php
 }

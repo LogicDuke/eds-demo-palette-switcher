@@ -4,9 +4,9 @@ Lets visitors to Elite Digital Solutions demo sites temporarily preview the colo
 
 **Scope: color palettes only.** The plugin never touches typography, layout, section order, animations, headers, button shapes, border radius, content, or images.
 
-The theme owns the palettes. The plugin only receives what the theme registers, displays it, and (in a later version) applies the visitor's choice client-side through `localStorage`. There are no database writes, no Customizer or option changes, and no page reloads, so it stays safe behind full-page caches such as Cloudflare. The plugin ships no palettes of its own.
+The theme owns the palettes. The plugin only receives what the theme registers, displays it, and applies the visitor's choice client-side through `localStorage`. There are no database writes, no Customizer or option changes, and no page reloads, so it stays safe behind full-page caches such as Cloudflare. The plugin ships no palettes of its own.
 
-> Status: v0.1.0, Phase 2. The integration contract plus a minimal, functional (unstyled) switcher. No theme integration ships with the plugin yet.
+> Status: v0.1.0. The integration contract, the client-side preview and the responsive switcher control. Themes integrate themselves through the API below.
 
 ## Admin setting
 
@@ -66,15 +66,71 @@ Reset removes the stored key and removes the `data-eds-demo-palette` attribute. 
 
 Every response is identical for every visitor: the bootstrap, the CSS and the panel markup are the same, and the per-visitor choice lives only in the browser. The plugin sets no cookies or `Vary` headers, so pages are safe to cache at the edge.
 
-### Switcher panel (Phase 2: functional only)
+## The switcher control
 
-The panel is a fixed box with these parts:
+The switcher is a small **Try Colors** button that opens an **EDS Demo Colors** panel. It uses its own neutral EDS look, defined as `--eds-dps-ui-*` variables, so it looks identical under every palette and never takes the theme's colours. All of its styles are scoped to `.eds-dps`, it uses no fonts or images from outside the page, and it is hidden when printing.
 
-- one real `<button>` per palette, showing its swatches and name, with `aria-pressed` marking the current palette;
-- a "Current palette" line, announced through `aria-live="polite"`;
-- a **Reset to Default** button.
+The panel contains:
 
-It stays `hidden` until the controller script runs, so visitors never see controls that don't work.
+- the title and a one-line description;
+- a close button;
+- a **Now showing** line with the current palette, marked "(site default)" when there is no preview override;
+- the palette list;
+- **Reset to Default**.
+
+Each palette row shows its swatches and name. The palette WordPress is configured to use is labelled "Site default", and the current palette is outlined and ticked.
+
+### Desktop and tablet (768px and wider)
+
+- The collapsed control is a slim tab fixed to the right edge, vertically centred, that stays visible while you scroll.
+- The panel opens beside the tab, 300–344px wide, and is never taller than the viewport minus 48px.
+
+### Mobile (narrower than 768px)
+
+- A compact floating button sits at the bottom right.
+- It opens a bottom sheet that is inset from the screen edges, at most 72% of the viewport height (and at most 520px wide).
+- Both respect the device's safe areas (`env(safe-area-inset-*)`).
+- Every control is at least 44px tall.
+
+### Scrolling
+
+The header and the Reset footer stay in place while the palette list scrolls on its own, using the browser's normal scrolling (`overflow-y: auto`). The list uses `overscroll-behavior: contain`, so reaching the end of the list doesn't start scrolling the page. The page itself is never locked.
+
+### Opening and closing
+
+- The tab or button toggles the panel, and its `aria-expanded` attribute reflects the state. It is linked to the panel with `aria-controls`.
+- Opening moves focus to the current palette and scrolls it into view.
+- Choosing a palette keeps the panel open so visitors can compare palettes.
+- The panel collapses back to the tab when the visitor:
+  - presses **Escape**;
+  - clicks the close button;
+  - clicks the tab or button again;
+  - clicks anywhere outside the switcher.
+- After Escape, the close button or the toggle, focus returns to the tab or button. An outside click leaves focus where the visitor clicked.
+- The outside-click listener only observes clicks. It never stops or alters the theme's own clicks.
+- Every page load starts collapsed. Collapsing is the only way to hide the switcher; nothing is hidden permanently.
+
+### Accessibility
+
+- All controls are real `<button>`s and work with the keyboard: Tab, Enter and Space.
+- Every control shows a visible `:focus-visible` ring.
+- Each palette button keeps `aria-pressed`.
+- The **Now showing** line is announced politely (`aria-live="polite"`).
+- The panel is a non-modal region labelled by its title.
+- The close button has an accessible name.
+- Swatches are decorative and hidden from assistive technology (`aria-hidden`).
+
+### Motion
+
+- **Opening:** the panel fades in and slides 12–14px into place in 280ms or less (a slide from the right on desktop, a rise from the bottom on mobile). This uses CSS `@starting-style`. Browsers without it simply show the panel without animating.
+- **Closing:** the panel closes immediately.
+- **With `prefers-reduced-motion: reduce`:** there is no slide, only a 120ms opacity change.
+
+### Stacking
+
+- The switcher uses `z-index: 9000`. That puts it above normal page content and sticky headers, but below consent banners that use higher values (EDS Consent uses 100000).
+- Theme dialogs opened with `showModal()` render above it in the browser's top layer.
+- The switcher stays `hidden` until its script runs, so visitors never see controls that don't work.
 
 ## Theme integration
 
