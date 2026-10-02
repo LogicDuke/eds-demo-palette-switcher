@@ -331,6 +331,29 @@
 	background: var(--eds-dps-ui-surface-hover);
 }
 
+/* Phones: a compact round button, so it stays clear of the site's own centred CTAs.
+   The label remains the button's accessible name (visually hidden). 44px target, safe areas kept. */
+@media (max-width: 767px) {
+	.eds-dps .eds-dps__toggle {
+		right: calc(12px + var(--eds-dps-ui-safe-right));
+		bottom: calc(12px + var(--eds-dps-ui-safe-bottom));
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		padding: 0;
+	}
+
+	.eds-dps .eds-dps__toggle-label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+}
+
 /* Desktop and tablet: slim right-edge tab + side panel --------------------- */
 @media (min-width: 768px) {
 	.eds-dps .eds-dps__toggle {

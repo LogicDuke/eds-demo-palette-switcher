@@ -146,7 +146,8 @@ function _eds_dps_print_panel() {
 		return;
 	}
 	?>
-	<div id="eds-dps" class="eds-dps" hidden>
+	<?php // translate="no" + notranslate: page translators (e.g. GTranslate) leave the switcher UI and palette names as registered. ?>
+	<div id="eds-dps" class="eds-dps notranslate" translate="no" hidden>
 		<button type="button" class="eds-dps__toggle" data-eds-dps-toggle aria-expanded="false" aria-controls="eds-dps-panel">
 			<svg class="eds-dps__toggle-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="7.5" cy="8" r="4.25"/><circle cx="12.5" cy="8" r="4.25"/><circle cx="10" cy="12.5" r="4.25"/></svg>
 			<span class="eds-dps__toggle-label"><?php esc_html_e( 'Try Colors', 'eds-demo-palette-switcher' ); ?></span>

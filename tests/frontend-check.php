@@ -152,6 +152,7 @@ check( '<style id="eds-dps-palettes">' . $css . "</style>\n" === output( '_eds_d
 
 $panel = output( '_eds_dps_print_panel' );
 check( false !== strpos( $panel, 'id="eds-dps"' ) && false !== strpos( $panel, ' hidden>' ), 'panel hidden until JS runs' );
+check( false !== strpos( $panel, 'class="eds-dps notranslate" translate="no"' ), 'switcher UI and palette names opt out of page translation' );
 check( 2 === substr_count( $panel, 'aria-pressed="false"' ), 'one aria-pressed button per palette' );
 check( 2 === substr_count( $panel, '<button type="button" class="eds-dps__palette"' ), 'palette controls are real buttons' );
 check( false !== strpos( $panel, 'data-eds-dps-reset>Reset to Default</button>' ), 'reset button present' );
