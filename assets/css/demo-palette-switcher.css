@@ -76,6 +76,25 @@
 	outline-offset: 2px;
 }
 
+/* Theme button states (e.g. Hello Elementor: button:hover/:focus { background-color: #c36; color: #fff })
+   load after this file at equal specificity; restate each control's own colours in those states. */
+.eds-dps .eds-dps__toggle:is(:hover, :focus, :focus-visible, :active) {
+	background-color: var(--eds-dps-ui-bg);
+	color: var(--eds-dps-ui-text);
+}
+
+.eds-dps :is(.eds-dps__palette, .eds-dps__reset):is(:hover, :focus, :focus-visible, :active) {
+	color: var(--eds-dps-ui-text);
+}
+
+.eds-dps .eds-dps__close:is(:focus, :focus-visible, :active):not(:hover) {
+	color: var(--eds-dps-ui-muted);
+}
+
+.eds-dps :is(.eds-dps__close, .eds-dps__reset, .eds-dps__palette:not([aria-pressed="true"])):is(:focus, :focus-visible, :active):not(:hover) {
+	background-color: transparent;
+}
+
 /* Toggle: floating button (mobile) ---------------------------------------- */
 .eds-dps .eds-dps__toggle {
 	position: fixed;
